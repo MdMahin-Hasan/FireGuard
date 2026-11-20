@@ -9,7 +9,10 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
 
@@ -59,11 +62,21 @@ class LoginView extends GetView<LoginController> {
                     // ==================================================
                     // PASSWORD
                     // ==================================================
-                    TextField(
-                      controller: controller.passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
+                    Obx(
+                          () => TextField(
+                        controller: controller.passwordController,
+                        obscureText: controller.obscurePassword.value,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.obscurePassword.value
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () => controller.obscurePassword.toggle(),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -73,7 +86,8 @@ class LoginView extends GetView<LoginController> {
                     // ERROR MESSAGE
                     // ==================================================
                     Obx(
-                          () => controller.errorMessage.value != null
+                          () =>
+                      controller.errorMessage.value != null
                           ? Text(
                         controller.errorMessage.value!,
                         textAlign: TextAlign.center,
@@ -143,7 +157,8 @@ class LoginView extends GetView<LoginController> {
             // FULL SCREEN LOADING OVERLAY
             // ============================================================
             Obx(
-                  () => controller.isLoading.value
+                  () =>
+              controller.isLoading.value
                   ? Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(0.45),

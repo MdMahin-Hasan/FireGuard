@@ -9,6 +9,7 @@ class ProfileController extends GetxController {
 
   var name = ''.obs;
   var email = ''.obs;
+  var phone = ''.obs;
   var isLoading = false.obs;
   final isEnabled = false.obs;
   var deviceId = ''.obs;
@@ -27,10 +28,11 @@ class ProfileController extends GetxController {
   Future<void> fetchProfile() async {
     isLoading.value = true;
 
-    // Name/email come from the session saved at login — there's no
+    // Name/email/phone come from the session saved at login — there's no
     // dedicated "get profile" endpoint in the API.
     name.value = await AuthStorage.getName() ?? '';
     email.value = await AuthStorage.getEmail() ?? '';
+    phone.value = await AuthStorage.getPhone() ?? '';
 
     // Fall back to the shared mock device until a real device-linking
     // API exists (see HomeController/AlertController's 'esp32-01').

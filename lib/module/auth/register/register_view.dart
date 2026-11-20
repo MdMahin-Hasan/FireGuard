@@ -81,6 +81,7 @@ class RegisterView extends GetView<RegisterController> {
                     // ==================================================
                     // DEVICE ID
                     // ==================================================
+
                     TextField(
                       controller: controller.deviceIdController,
                       decoration: const InputDecoration(
@@ -90,6 +91,15 @@ class RegisterView extends GetView<RegisterController> {
 
                     const SizedBox(height: 15),
 
+                    // Phone number
+                    TextField(
+                      controller: controller.PhoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone number ',
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
                     // ==================================================
                     // ERROR MESSAGE
                     // ==================================================
@@ -105,8 +115,8 @@ class RegisterView extends GetView<RegisterController> {
 
                     const SizedBox(height: 20),
                     // ==================================================
-                   // SIGN UP BUTTON
-                  // ==================================================
+                    // SIGN UP BUTTON
+                    // ==================================================
                     GestureDetector(
                       onTap: () {
                         if (!controller.isLoading.value) {

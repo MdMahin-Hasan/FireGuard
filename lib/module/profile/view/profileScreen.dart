@@ -33,10 +33,7 @@ class ProfileScreen extends GetView<ProfileController> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 35),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Color(0xFFE5252A),
-                      Color(0xFFB51218),
-                    ],
+                    colors: [Color(0xFFE5252A), Color(0xFFB51218)],
                   ),
                   borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(40),
@@ -80,6 +77,12 @@ class ProfileScreen extends GetView<ProfileController> {
                       style: const TextStyle(color: Colors.grey),
                     ),
 
+                    if (controller.phone.value.isNotEmpty)
+                      Text(
+                        controller.phone.value,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+
                     const SizedBox(height: 10),
 
                     Obx(() {
@@ -90,17 +93,20 @@ class ProfileScreen extends GetView<ProfileController> {
                         return const SizedBox();
                       }
 
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      return Column(
                         children: [
-                          RoleBadge(label: role.label, color: Colors.blue),
-                          const SizedBox(width: 10),
-                          Icon(status.icon,
-                              size: 16, color: status.color),
-                          const SizedBox(width: 4),
-                          Text(
-                            status.name,
-                            style: TextStyle(color: status.color),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoleBadge(label: role.label, color: Colors.blue),
+                              const SizedBox(width: 10),
+                              Icon(status.icon, size: 16, color: status.color),
+                              const SizedBox(width: 4),
+                              Text(
+                                status.name,
+                                style: TextStyle(color: status.color),
+                              ),
+                            ],
                           ),
                         ],
                       );
@@ -112,7 +118,7 @@ class ProfileScreen extends GetView<ProfileController> {
               // Settings
               Expanded(
                 child: ListView(
-                  padding:const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   children: [
                     const Text(
                       'Settings',
@@ -131,8 +137,7 @@ class ProfileScreen extends GetView<ProfileController> {
                       trailing: Obx(
                             () => Switch(
                           value: controller.isEnabled.value,
-                          onChanged: (v) =>
-                          controller.isEnabled.value = v,
+                          onChanged: (v) => controller.isEnabled.value = v,
                         ),
                       ),
                     ),

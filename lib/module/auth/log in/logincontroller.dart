@@ -2,7 +2,6 @@ import 'package:firedetection_system/app/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/helper/push_notification.dart';
 import '../../../data/service/auth_service.dart';
 
 class LoginController extends GetxController {
@@ -15,12 +14,12 @@ class LoginController extends GetxController {
 
   final isLoading = false.obs;
   final errorMessage = RxnString();
+  final obscurePassword = true.obs;
 
   Future<void> submit() async {
     if (emailController.text.trim().isEmpty ||
         passwordController.text.isEmpty) {
-      errorMessage.value =
-      'Enter your email and password.';
+      errorMessage.value = 'Enter your email and password.';
       return;
     }
 
@@ -35,41 +34,17 @@ class LoginController extends GetxController {
 
       if (!result.success) {
         errorMessage.value =
-            result.errorMessage ??
-                'Invalid email or password.';
+            result.errorMessage ?? 'Invalid email or password.';
         return;
       }
 
-      // --------------------------------------------------
-      // REGISTER FCM TOKEN FOR USER'S DEVICES
-      // --------------------------------------------------
-
-      if (result.deviceIds.isNotEmpty) {
-        await PushNotificationHelper.registerToken(
-          result.deviceIds,
-        );
-
-        PushNotificationHelper.listenForTokenRefresh(
-          result.deviceIds,
-        );
-      } else {
-        debugPrint(
-          'FCM: No device IDs found in login response.',
-        );
-      }
-
-      // --------------------------------------------------
-      // GO TO MAIN APP
-      // --------------------------------------------------
+      // FCM token এখানে পাঠাতে হবে না:
+      // AuthService._saveSession() আগেই PushNotificationHelper.registerToken() কল করে।
 
       Get.offAllNamed(AppRoutes.navbar);
     } catch (e) {
-      errorMessage.value =
-      'Login failed. Please try again.';
-
-      debugPrint(
-        'Login error: $e',
-      );
+      errorMessage.value = 'Login failed. Please try again.';
+      debugPrint('Login error: $e');
     } finally {
       isLoading.value = false;
     }

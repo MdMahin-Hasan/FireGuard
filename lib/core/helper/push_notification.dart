@@ -1,7 +1,56 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+
+import '../constant/api_constants.dart';
+import '../network/api_client.dart';
 
 class PushNotificationHelper {
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static bool _listening = false;
+
+  /// login / register-owner / accept-invite সফল হওয়ার পর কল হয়
+  /// (JWT তখন AuthStorage-এ সেভ থাকে)
+  static Future<void> registerToken() async {
+    try {
+      final settings = await _messaging.requestPermission();
+      debugPrint('FCM permission: ${settings.authorizationStatus}');
+
+      final token = await _messaging.getToken();
+      if (token == null || token.isEmpty) {
+        debugPrint('FCM: token is null/empty.');
+        return;
+      }
+
+      await _send(token);
+      listenForTokenRefresh();
+    } catch (e) {
+      debugPrint('FCM register failed: $e');
+    }
+  }
+
+  static void listenForTokenRefresh() {
+    if (_listening) return;
+    _listening = true;
+    _messaging.onTokenRefresh.listen(_send);
+  }
+
+  static Future<void> _send(String token) async {
+    try {
+      await ApiClient().post(
+        ApiConstants.fcmToken,
+        {'token': token},
+        authRequired: true,
+      );
+      debugPrint('FCM: token sent to backend.');
+    } catch (e) {
+      debugPrint('FCM token send failed: $e');
+    }
+  }
+}
+
+
+
+/*class PushNotificationHelper {
   static final FirebaseMessaging _messaging =
       FirebaseMessaging.instance;
 
@@ -99,4 +148,5 @@ class PushNotificationHelper {
       },
     );
   }
-}
+}*/
+

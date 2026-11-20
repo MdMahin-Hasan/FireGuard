@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/helper/logger_helper.dart';
 import '../../../core/network/api_client.dart';
 import '../../../data/service/invitation.dart';
 
@@ -63,10 +64,16 @@ class _InviteDialogState extends State<InviteDialog> {
         duration: const Duration(seconds: 3),
       );
     } on ApiException catch (e) {
-      setState(() {
-        _isSending = false;
-        _errorText = e.message;
-      });
+      LoggerHelper.instance.error(error: 'Invite failed [${e.statusCode}]: ${e.message}');
+      if (!mounted) return;
+      setState(() { _isSending = false; _errorText = e.message; });
+      Get.snackbar('Invite failed', e.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade600, colorText: Colors.white);
+    } catch (e, st) {
+      LoggerHelper.instance.error(error: e, stackTrace: st);
+      if (!mounted) return;
+      setState(() { _isSending = false; _errorText = 'Could not reach the server. Try again.'; });
     }
   }
 

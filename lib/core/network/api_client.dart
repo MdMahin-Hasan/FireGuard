@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../storage/auth_storage.dart';
@@ -17,21 +18,31 @@ class ApiClient {
       headers['Authorization'] = 'Bearer $token';
     }
 
-    final response = await http.post(
+    final response = await http
+        .post(
       Uri.parse(url),
       headers: headers,
       body: jsonEncode(body),
-    );
+    )
+        .timeout(const Duration(seconds: 30)); // new
 
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    debugPrint('POST $url -> ${response.statusCode} ${response.body}'); // new
+
+    dynamic decoded; // new
+    try {
+      decoded = jsonDecode(response.body);
+    } catch (_) {
+      decoded = null;
+    }
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return decoded;
+      return decoded is Map<String, dynamic> ? decoded : {};
     }
 
     throw ApiException(
       statusCode: response.statusCode,
-      message: decoded['error'] ?? 'Something went wrong.',
+      message: (decoded is Map ? decoded['error'] : null) ??
+          'Server error (${response.statusCode})',
     );
   }
   Future<dynamic> get(

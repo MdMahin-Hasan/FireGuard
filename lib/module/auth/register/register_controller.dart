@@ -14,12 +14,14 @@ class RegisterController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final deviceIdController = TextEditingController();
+  final PhoneController = TextEditingController();
 
   final isLoading = false.obs;
   final errorMessage = RxnString();
 
   Future<void> submit() async {
     if (deviceIdController.text.isEmpty ||
+        PhoneController.text.isEmpty ||
         nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.length < 8) {
@@ -35,6 +37,7 @@ class RegisterController extends GetxController {
       name: nameController.text.trim(),
       email: emailController.text.trim(),
       password: passwordController.text,
+      phonenum: PhoneController.text.trim()
     );
 
     if (isClosed) return;
@@ -55,6 +58,7 @@ class RegisterController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     deviceIdController.dispose();
+    PhoneController.dispose();
     super.onClose();
   }
 }

@@ -1,4 +1,5 @@
 import '../../core/constant/api_constants.dart';
+import '../../core/helper/push_notification.dart';
 import '../../core/network/api_client.dart';
 import '../../core/storage/auth_storage.dart';
 import '../model/auth_result.dart';
@@ -17,6 +18,7 @@ class AuthService {
     required String name,
     required String email,
     required String password,
+    required String phonenum
   }) async {
     try {
       final data = await _client.post(
@@ -26,12 +28,14 @@ class AuthService {
           'name': name,
           'email': email,
           'password': password,
+          'phone' : phonenum
         },
       );
 
       await _saveSession(
         data,
         deviceId: deviceId,
+        phone: phonenum,
       );
 
       // Registration normally has one device.
@@ -185,6 +189,7 @@ class AuthService {
   Future<void> _saveSession(
       Map<String, dynamic> data, {
         String? deviceId,
+        String? phone,
       }) async {
     // ----------------------------------------------------------
     // The API returns the device inside memberships.
@@ -219,10 +224,15 @@ class AuthService {
       email: data['user']['email'],
       name: data['user']['name'],
 
+      // Prefer phone from API; fall back to what the user typed at register.
+      phone: (data['user']['phone'] as String?) ?? phone,
+
       // Prefer device from API.
       // Fall back to deviceId supplied by caller.
       deviceId:
       membershipDeviceId ?? deviceId,
     );
+    // নতুন: session সেভ হওয়ার পর FCM token backend-এ পাঠানো
+    PushNotificationHelper.registerToken(); // await করবেন না, login ধীর হবে না
   }
 }

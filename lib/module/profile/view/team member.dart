@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../data/model/membership_model.dart';
 import '../controller/team_memcontroller.dart';
@@ -40,13 +41,52 @@ class _DeviceTeamMembersScreenState
     return Scaffold(
       backgroundColor: Colors.grey[100],
 
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Team Members (${widget.deviceId})',
+        appBar: AppBar(
+          toolbarHeight: 90,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          titleSpacing: 0,
+
+          // লাল gradient + নিচে গোল কোণ
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFA30B12), Color(0xFFE5142B)],
+              ),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+            ),
+          ),
+
+          title: Row(
+            children: [
+              const Icon(Icons.shield_outlined, size: 42),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Team Members',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    '(${widget.deviceId})',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => _controller.refresh(widget.deviceId),
+            ),
+          ],
         ),
-        elevation: 0,
-      ),
 
       body: ListenableBuilder(
         listenable: _controller,

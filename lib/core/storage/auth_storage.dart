@@ -5,6 +5,7 @@ class AuthStorage {
   static const String _userIdKey = 'userId';
   static const String _nameKey = 'name';
   static const String _emailKey = 'email';
+  static const String _phoneKey = 'phone';
   static const String _deviceIdKey = 'deviceId';
 
   static Future<void> saveSession({
@@ -12,6 +13,7 @@ class AuthStorage {
     required String userId,
     required String email,
     String? name,
+    String? phone,
     String? deviceId,
   }) async {
     final prefs = await SharedPreferences.getInstance();
@@ -20,6 +22,9 @@ class AuthStorage {
     await prefs.setString(_emailKey, email);
     if (name != null) {
       await prefs.setString(_nameKey, name);
+    }
+    if (phone != null && phone.isNotEmpty) {
+      await prefs.setString(_phoneKey, phone);
     }
     if (deviceId != null) {
       await prefs.setString(_deviceIdKey, deviceId);
@@ -46,6 +51,11 @@ class AuthStorage {
     return prefs.getString(_emailKey);
   }
 
+  static Future<String?> getPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_phoneKey);
+  }
+
   static Future<String?> getName() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_nameKey);
@@ -62,6 +72,7 @@ class AuthStorage {
     await prefs.remove(_userIdKey);
     await prefs.remove(_nameKey);
     await prefs.remove(_emailKey);
+    await prefs.remove(_phoneKey);
     await prefs.remove(_deviceIdKey);
   }
 }
